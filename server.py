@@ -26,6 +26,10 @@ print(rumours)
 def index():
     return render_template('index.html', rumours=rumours)
 
+@app.route("/style.css")
+def style():
+    return render_template('style.css')
+
 @app.route('/text/<text>')
 def search_text(text):
 	print('searching for ', text.replace('%23', '#'))
