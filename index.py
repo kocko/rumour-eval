@@ -1,5 +1,6 @@
 from utils import read, write
 
+
 def count_occurrences(tweets):
     words = {}
     bigrams = {}
@@ -15,7 +16,8 @@ def count_occurrences(tweets):
                 bigrams[bigram] = bigrams.get(bigram, 0) + 1
 
             last_word = word
-    return (words, bigrams)
+    return words, bigrams
+
 
 def create_index(words, bigrams):
     word_index = {}
@@ -40,6 +42,7 @@ def create_index(words, bigrams):
 
     return {"words": word_index, "bigrams": bigram_index}
 
+
 def print_common_occurrences_counts(words, bigrams):
     print(len(words))
     for i in list(range(1, 10)) + [20, 40, 80, 160, 320, 640, 1280]:
@@ -59,10 +62,10 @@ def print_common_occurrences_counts(words, bigrams):
 
     return
 
+
 if __name__ == '__main__':
     train = read('data/train.json')
     tweets, bigrams = count_occurrences(train)
     # print_common_occurrences_counts(tweets, bigrams)
     index = create_index(tweets, bigrams)
     write('data/index.json', index)
-

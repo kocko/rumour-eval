@@ -1,16 +1,19 @@
+import csv
 from os import path
-# from pprint import pprint
+
 from utils import read, write, folders, files
 
-DATA_LOCATION = ".\\src\\main\\resources\\dataset\\rumoureval-data"
+DATA_LOCATION = ".\\resources\\dataset\\rumoureval-data"
 TRAIN = DATA_LOCATION + "\\..\\traindev\\rumoureval-subtaskA-train.json"
-DEV   = DATA_LOCATION + "\\..\\traindev\\rumoureval-subtaskA-dev.json"
+DEV = DATA_LOCATION + "\\..\\traindev\\rumoureval-subtaskA-dev.json"
+
 
 def tweet(location):
-    keys = ['text', 'id_str', 'created_at', 'in_reply_to_status_id_str', 'retweet_count',
-        'entities'] #user?
+    keys = ['text', 'id_str', 'created_at', 'in_reply_to_status_id_str', 'retweet_count', 'entities']
+    # user?
     data = read(location)
-    return { key: data[key] for key in keys }
+    return {key: data[key] for key in keys}
+
 
 def load_data():
     # rumours = {k: {} for k in folders('.')}
@@ -29,10 +32,13 @@ def load_data():
                 "replies": {id[:-5]: tweet(f) for id, f in replies}
             }
 
-    write('data/data.json', data);
+    write('data/data.json', data)
     return data
 
-def walk(parent, node, result=[]):
+
+def walk(parent, node, result=None):
+    if result is None:
+        result = []
     for key, item in node.items():
         result.append({"from": parent, "to": key})
         if len(item):
@@ -42,7 +48,6 @@ def walk(parent, node, result=[]):
 
 def create_table_json():
     data = read('data/data.json')
-    result = []
     all_tweets = {}
     for rumour, rumour_data in data.items():
         for x, thread in rumour_data.items():
@@ -68,6 +73,7 @@ def create_table_json():
     write('data/tweets.json', list(all_tweets.values()))
     to_csv(list(all_tweets.values()))
     return all_tweets.values()
+
 
 def divide_train_dev(tweets):
     train_categories = read(TRAIN)
@@ -98,15 +104,13 @@ def divide_train_dev(tweets):
                 #     'reply_to': tweet['reply_to'],
                 #     'group': dev_categories[tweet['id']]
                 # }]
-            # all += [el]
+                # all += [el]
 
     write('data/train.json', train)
     write('data/dev.json', dev)
     write('data/groups.json', dict(train_categories.items() | dev_categories.items()))
 
 
-
-import csv
 def to_csv(data):
     keys = ['id', 'rumour', 'text', 'reply_to']
 
@@ -117,9 +121,8 @@ def to_csv(data):
             if 'reply_to' in item:
                 csv_file.writerow([item[key] for key in keys])
 
+
 if __name__ == "__main__":
     load_data()
     tweets = create_table_json()
     divide_train_dev(tweets)
-
-
