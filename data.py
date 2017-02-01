@@ -62,7 +62,8 @@ def create_table_json():
                     'rumour': rumour,
                     'text': tweet['text'],
                     'id': key,
-                    'reply_to': tweet['in_reply_to_status_id_str']
+                    'reply_to': tweet['in_reply_to_status_id_str'],
+                    'contains_original': compare_content(tweet['text'], thread['source']['text'])
                     # 'reply_to': all_tweets[tweet['in_reply_to_status_id_str']]['text']
                 }
 
@@ -73,6 +74,16 @@ def create_table_json():
     write('data/tweets.json', list(all_tweets.values()))
     to_csv(list(all_tweets.values()))
     return all_tweets.values()
+
+
+def compare_content(reply, original_tweet):
+    count = 0
+    split = original_tweet.split()
+    total = len(split)
+    for token in split:
+        if token in reply:
+            count += 1
+    return (count / total) >= 0.4
 
 
 def divide_train_dev(tweets):
