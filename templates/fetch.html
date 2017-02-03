@@ -6,11 +6,17 @@
 <body>
 <div id="wrapper">
     <header><h1>Task 8</h1></header>
-    <form id="search-form"><input id="search">
-        <button>Fetch</button>
+    <form id="search-form" action="fetch-tweet" method="post">
+        <label for="tweet_id">TweetId:</label>
+        <input id="tweet_id" name="tweet_id">
+        <!--<br/>-->
+        <!--<label for="replies-list">Replies:</label>-->
+        <!--<input id="replies-list">-->
+        <!--<br />-->
+        <input type="submit" title="test" value="test">
+        <button type="submit">Fetch</button>
         <a class="fetch" href="/">Go back</a>
     </form>
-    
 </div>
 
 </body>
