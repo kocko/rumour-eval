@@ -41,11 +41,17 @@ def fetch_tweet_page():
 @app.route("/fetch-tweet", methods=['POST'])
 def fetch_tweet_by_id():
     tweet_id = request.form['tweet_id']
+
     create_folders(tweet_id)
     api = authenticate()
 
     tweet = api.get_status(tweet_id)
-    persist_tweet(tweet, "source-tweet")
+    persist_tweet(tweet, str(tweet.id), "source-tweet")
+
+    reply_ids = request.form['replies_list']
+    for reply_id in reply_ids.split(','):
+        reply = api.get_status(reply_id.strip())
+        persist_tweet(reply, str(tweet.id), "replies")
 
     return render_template('success.html')
 
@@ -75,9 +81,9 @@ def authenticate():
     return tweepy.API(auth)
 
 
-def persist_tweet(tweet, folder):
+def persist_tweet(tweet, parent_tweet_id, folder):
     tweet_id_as_string = str(tweet.id)
-    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + tweet_id_as_string + "/" + folder
+    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + parent_tweet_id + "/" + folder
     with open(tweet_dir + "/" + tweet_id_as_string + ".json", 'w') as outfile:
         json.dump(tweet._json, outfile)
 
