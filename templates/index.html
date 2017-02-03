@@ -1,19 +1,22 @@
 <html>
 <head>
-  <title>Task 8</title>
+  <title>Rumour evaluation</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="wrapper">
-    <header><h1>Task 8</h1></header>
-    <form id="search-form"><input id="search"><button>search</button></form>
+    <header><h1>Rumour evaluation</h1></header>
+    <form id="search-form"><input id="search">
+      <button>Search</button>
+      <a class="fetch" href="/fetch-tweet">Fetch more tweets</a>
+    </form>
     <nav>
       {% for rumour in rumours %}
-      <span class="rumour">{{rumour}}</span>
+        <span class="rumour">{{rumour}}</span>
       {% endfor %}
     </nav>
     <section>
-      <h2>Results <span class="count"><span></h2>
+      <h2>Results <span class="count"></span></h2>
       <div id="error"></div>
       <main></main>
     </section>
@@ -51,7 +54,7 @@
     };
     var renderText = function (text) {
       return text.replace(/[#@]\w+/g, function(e) {
-        return '<a href="#text/' + e + '">' + e + '</a>'
+        return '<a class="external" href="#text/' + e + '">' + e + '</a>'
       }).replace(/http:\S+/g, function (e) {
         return '<a target="_blank" class="external" href="' + e + '">' + e + '</a>'
       }).replace(/\n/g, '<br>')
