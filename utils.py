@@ -14,7 +14,7 @@ def read(file):
 
 def write(file, data):
     with open(file, 'w') as outfile:
-        json.dump(data, outfile)
+        json.dump(data, outfile, indent=2)
 
 
 def folders(dirname):

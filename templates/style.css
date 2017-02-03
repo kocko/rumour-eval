@@ -67,11 +67,26 @@ a {
     text-decoration: none;
 }
 
+a.fetch {
+    color: #349;
+    text-decoration: none;
+    background: #eee;
+    border: 1px solid #999;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 5px;
+}
+
+a.fetch:hover {
+    color: #35c;
+    text-decoration: none;
+}
+
 a.external {
     color: #630;
 }
 
-a:hover {
+a.external:hover {
     color: #35c;
     text-decoration: underline;
 }
@@ -113,4 +128,3 @@ nav {
     text-align: center;
     user-select: none;
 }
-
