@@ -78,9 +78,12 @@ def create_folders(tweet_id):
     src_tweet_dir = tweet_dir + "/source-tweet"
     replies_tweet_dir = tweet_dir + "/replies"
 
-    os.makedirs(tweet_dir)
-    os.makedirs(src_tweet_dir)
-    os.makedirs(replies_tweet_dir)
+    try:
+        os.makedirs(tweet_dir)
+        os.makedirs(src_tweet_dir)
+        os.makedirs(replies_tweet_dir)
+    except FileExistsError:
+        return
 
 
 def authenticate():
@@ -100,15 +103,21 @@ def authenticate():
 def persist_tweet(tweet, parent_tweet_id, folder):
     tweet_id_as_string = str(tweet.id)
     tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + parent_tweet_id + "/" + folder
-    with open(tweet_dir + "/" + tweet_id_as_string + ".json", 'w') as outfile:
-        json.dump(tweet._json, outfile)
+    try:
+        with open(tweet_dir + "/" + tweet_id_as_string + ".json", 'w') as outfile:
+            json.dump(tweet._json, outfile)
+    except FileExistsError:
+        return
 
 
 def persist_structure(tweet_id, structure):
     tweet_id_as_string = str(tweet_id)
     tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + tweet_id_as_string
-    with open(tweet_dir + "/structure.json", 'w') as outfile:
-        json.dump(structure, outfile)
+    try:
+        with open(tweet_dir + "/structure.json", 'w') as outfile:
+            json.dump(structure, outfile)
+    except FileExistsError:
+        return
 
 
 @app.route("/style.css")
