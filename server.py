@@ -48,10 +48,16 @@ def fetch_tweet_by_id():
     tweet = api.get_status(tweet_id)
     persist_tweet(tweet, str(tweet.id), "source-tweet")
 
+    structure = dict()
+    structure[tweet_id] = list()
+
     reply_ids = request.form['replies_list']
     for reply_id in reply_ids.split(','):
         reply = api.get_status(reply_id.strip())
+        structure[tweet_id].append(reply_id)
         persist_tweet(reply, str(tweet.id), "replies")
+
+    persist_structure(tweet_id, structure)
 
     return render_template('success.html')
 
@@ -86,6 +92,13 @@ def persist_tweet(tweet, parent_tweet_id, folder):
     tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + parent_tweet_id + "/" + folder
     with open(tweet_dir + "/" + tweet_id_as_string + ".json", 'w') as outfile:
         json.dump(tweet._json, outfile)
+
+
+def persist_structure(tweet_id, structure):
+    tweet_id_as_string = str(tweet_id)
+    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + tweet_id_as_string
+    with open(tweet_dir + "/structure.json", 'w') as outfile:
+        json.dump(structure, outfile)
 
 
 @app.route("/style.css")
