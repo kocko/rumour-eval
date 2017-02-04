@@ -5,6 +5,7 @@ import os
 import tweepy
 from flask import Flask, render_template, request
 
+from preprocess import load_data
 from search import search
 from utils import read
 
@@ -13,6 +14,14 @@ data = read('data/data.json')
 rumours = list(data.keys())
 threads = {k: v for rumour in data.values() for k, v in rumour.items()}
 groups = read('data/groups.json')
+
+
+def update_data():
+    global data, rumours, threads, groups
+    data = read('data/data.json')
+    rumours = list(data.keys())
+    threads = {k: v for rumour in data.values() for k, v in rumour.items()}
+    groups = read('data/groups.json')
 
 
 def replies(thread):
@@ -58,7 +67,8 @@ def fetch_tweet_by_id():
         persist_tweet(reply, str(tweet.id), "replies")
 
     persist_structure(tweet_id, structure)
-
+    load_data()
+    update_data()
     return render_template('success.html')
 
 
