@@ -28,6 +28,8 @@ def replies(thread):
     # log(thread_id)
     # log(len(threads[thread_id].get('replies', dict()).values()))
     # return [log(tweet['text']) for tweet in threads[thread_id].get('replies', dict()).values()]
+    # print('==')
+    # print(len(thread.get('replies', dict()).values()))
     return [{
                 'text': tweet['text'],
                 'group': groups.get(tweet.get('id_str', 0), 'unknown')
@@ -141,18 +143,18 @@ def search_text(text):
 @app.route('/rumour/<rumour>')
 def search_rumour(rumour):
     results = data[rumour].values()
-    print('-----')
-    print(len(results))
-    print(len(list(results)))
-    print(len(list(results)[0]))
-    print(list(results)[0]['source']['text'])
-    # print(json.dumps(list(results)[0]))
-    print('-----')
+    # print('-----')
+    # print(len(results))
+    # print(len(list(results)))
+    # print(len(list(results)[0]))
+    # print(list(results)[0]['source']['text'])
+    # # print(json.dumps(list(results)[0]))
+    # print('-----')
     results = [{
                    "text": thread['source']['text'],
                    "replies": replies(thread)
                } for thread in results]
-    print('dasdansuidnaskd')
+    # print('dasdansuidnaskd')
     return json.dumps(results)
 
 
