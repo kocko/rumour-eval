@@ -1,11 +1,9 @@
-import configparser
 import json
-import os
 
-import tweepy
 from flask import Flask, render_template, request
 
 from preprocess import load_data
+from fetch import fetch_tweet_and_replies
 from search import search
 from utils import read
 
@@ -50,76 +48,18 @@ def fetch_tweet_page():
 
 
 @app.route("/fetch-tweet", methods=['POST'])
-def fetch_tweet_by_id():
+def fetch_tweet():
     tweet_id = request.form['tweet_id']
-
-    create_folders(tweet_id)
-    api = authenticate()
-
-    tweet = api.get_status(tweet_id)
-    persist_tweet(tweet, str(tweet.id), "source-tweet")
-
-    structure = dict()
-    structure[tweet_id] = list()
-
     reply_ids = request.form['replies_list']
-    for reply_id in reply_ids.split(','):
-        reply = api.get_status(reply_id.strip())
-        structure[tweet_id].append(reply_id)
-        persist_tweet(reply, str(tweet.id), "replies")
-
-    persist_structure(tweet_id, structure)
+    # print(tweet_id, reply_ids)
+    fetch_tweet_and_replies(tweet_id, reply_ids)
+    # print('loading')
     load_data()
+    # print('updating')
     update_data()
+    # print('rendering')
     return render_template('success.html')
 
-
-def create_folders(tweet_id):
-    tweet_id_as_string = str(tweet_id)
-    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + tweet_id_as_string
-    src_tweet_dir = tweet_dir + "/source-tweet"
-    replies_tweet_dir = tweet_dir + "/replies"
-
-    try:
-        os.makedirs(tweet_dir)
-        os.makedirs(src_tweet_dir)
-        os.makedirs(replies_tweet_dir)
-    except FileExistsError:
-        return
-
-
-def authenticate():
-    config = configparser.ConfigParser()
-    config.read('config/twitter.ini')
-
-    consumer_key = config.get('Twitter', 'consumer_key')
-    consumer_secret = config.get('Twitter', 'consumer_secret')
-    access_key = config.get('Twitter', 'access_key')
-    access_secret = config.get('Twitter', 'access_secret')
-
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_key, access_secret)
-    return tweepy.API(auth)
-
-
-def persist_tweet(tweet, parent_tweet_id, folder):
-    tweet_id_as_string = str(tweet.id)
-    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + parent_tweet_id + "/" + folder
-    try:
-        with open(tweet_dir + "/" + tweet_id_as_string + ".json", 'w') as outfile:
-            json.dump(tweet._json, outfile)
-    except FileExistsError:
-        return
-
-
-def persist_structure(tweet_id, structure):
-    tweet_id_as_string = str(tweet_id)
-    tweet_dir = "resources/dataset/rumoureval-data/random-rumours/" + tweet_id_as_string
-    try:
-        with open(tweet_dir + "/structure.json", 'w') as outfile:
-            json.dump(structure, outfile)
-    except FileExistsError:
-        return
 
 
 @app.route("/style.css")
