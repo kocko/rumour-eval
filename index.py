@@ -63,9 +63,13 @@ def print_common_occurrences_counts(words, bigrams):
     return
 
 
-if __name__ == '__main__':
+def main():
     train = read('data/train.json')
     tweets, bigrams = count_occurrences(train)
     # print_common_occurrences_counts(tweets, bigrams)
     index = create_index(tweets, bigrams)
     write('data/index.json', index)
+
+
+if __name__ == '__main__':
+    main()

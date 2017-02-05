@@ -49,7 +49,7 @@ def count_groups(tweets):
     print(groups)
 
 
-if __name__ == '__main__':
+def main():
     print('reading index')
     index = read('data/index.json')
     print('reading train')
@@ -60,6 +60,14 @@ if __name__ == '__main__':
     # dev = [tweet for tweet in dev if tweet[1] != 'comment']
     print('creating classifier')
     clf = create_classifier(train)
+    return clf
+    # print('testing classifier')
+    # test_classifier(clf, dev)
+
+
+if __name__ == '__main__':
+    clf = main()
     print('testing classifier')
     test_classifier(clf, dev)
+
 # print(tweet_to_binary_array(train[0], index))

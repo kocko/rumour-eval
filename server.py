@@ -34,8 +34,6 @@ def replies(thread):
             } for tweet in thread.get('replies', dict()).values()]
 
 
-print(rumours)
-
 
 @app.route("/")
 def index():
@@ -98,5 +96,11 @@ def search_rumour(rumour):
     return json.dumps(results)
 
 
-if __name__ == "__main__":
+def main():
+    global app, rumours
+    print('Active rumours', rumours)
     app.run()
+
+
+if __name__ == "__main__":
+    main()

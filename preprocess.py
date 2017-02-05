@@ -133,7 +133,11 @@ def to_csv(data):
                 csv_file.writerow([item[key] for key in keys])
 
 
-if __name__ == "__main__":
+def main():
     load_data()
     tweets = create_table_json()
     divide_train_dev(tweets)
+
+
+if __name__ == "__main__":
+    main()
