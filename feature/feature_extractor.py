@@ -8,6 +8,9 @@ OUTFILE = "..\\data\\vector.json"
 NEGATIVE_LEXICON = "..\\resources\\lexicon\\negative.txt"
 POSITIVE_LEXICON = "..\\resources\\lexicon\\positive.txt"
 
+# vector explained:
+# [contains_original, positive_words_percentage, negative_words_percentage, reversed_word_order, contains_question_mark]
+# more possible features: contains_only_usernames
 
 def main():
     data = read(REPLIES)
