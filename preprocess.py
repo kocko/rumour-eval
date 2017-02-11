@@ -1,7 +1,9 @@
 import csv
-from os import path
+import nltk
 
+from os import path
 from utils import read, write, folders, files
+from nltk import TweetTokenizer
 
 DATA_LOCATION = ".\\resources\\dataset\\rumoureval-data"
 TRAIN = DATA_LOCATION + "\\..\\traindev\\rumoureval-subtaskA-train.json"
@@ -58,9 +60,11 @@ def create_table_json():
             }
 
             for key, tweet in thread['replies'].items():
+                tokenized_tweet = tweet_tokenize(tweet['text'])
                 all_tweets[key] = {
                     'rumour': rumour,
-                    'text': tweet['text'],
+                    'text': tokenized_tweet,
+                    'tags': tag_part_of_speech(tokenized_tweet),
                     'id': key,
                     'reply_to': tweet['in_reply_to_status_id_str'],
                     'contains_original': compare_content(tweet['text'], thread['source']['text'])
@@ -131,6 +135,20 @@ def to_csv(data):
         for item in data:
             if 'reply_to' in item:
                 csv_file.writerow([item[key] for key in keys])
+
+
+def tweet_tokenize(text):
+    tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
+    words = tokenizer.tokenize(text)
+    return " ".join(words)
+
+
+def tag_part_of_speech(text):
+    tags = nltk.pos_tag(nltk.word_tokenize(text))
+    result = []
+    for (word, tag) in tags:
+        result.append(tag)
+    return " ".join(result)
 
 
 def main():
