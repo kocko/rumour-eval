@@ -7,11 +7,11 @@ def tweet_to_binary_array(tweet, index):
     words = tweet['text'].split(' ')
     index = index['words']
     array = [index[word] for word in words if index.get(word)]
-    array2 = [False] * len(index)
+    features = [False] * len(index)
     for e in array:
-        array2[e] = True
+        features[e] = True
 
-    return (array2, tweet['group'])
+    return (features, tweet['group'])
 
 
 def divide_data_and_target(tweets):
@@ -33,7 +33,7 @@ def test_classifier(clf, test_tweets):
     correct = 0
     for tweet, group in test_tweets:
         prediction = clf.predict(tweet)
-        print(prediction, group)
+        print(prediction, group, tweet[3])
         if prediction == group:
             correct += 1
     print('correct: ', correct)
@@ -52,22 +52,32 @@ def count_groups(tweets):
 def main():
     print('reading index')
     index = read('data/index.json')
+ 
     print('reading train')
     train = [tweet_to_binary_array(tweet, index) for tweet in read('data/train.json')]
     count_groups(read('data/train.json'))
+ 
+    print('reading vector')
+    vector = read('data/vector.json')
+    train_groups = read('resources/dataset/traindev/rumoureval-subtaskA-train.json')
+
+    train_vector = [(vector[tweet]['vector'], train_groups[tweet]) for tweet in vector if tweet in train_groups]
+
+    dev_groups = read('resources/dataset/traindev/rumoureval-subtaskA-dev.json')
+    dev_vector = [(vector[tweet]['vector'], dev_groups[tweet]) for tweet in vector if tweet in dev_groups]
+
     print('reading dev')
-    dev = [tweet_to_binary_array(tweet, index) for tweet in read('data/dev.json')]
+    #dev = [tweet_to_binary_array(tweet, index) for tweet in read('data/dev.json')]
     # dev = [tweet for tweet in dev if tweet[1] != 'comment']
+ 
     print('creating classifier')
-    clf = create_classifier(train)
-    return clf
-    # print('testing classifier')
-    # test_classifier(clf, dev)
+    clf = create_classifier(train_vector)
+ 
+    print('testing classifier')
+    test_classifier(clf, dev_vector)
 
 
 if __name__ == '__main__':
-    clf = main()
-    print('testing classifier')
-    test_classifier(clf, dev)
+    main()
 
 # print(tweet_to_binary_array(train[0], index))
