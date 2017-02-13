@@ -1,6 +1,7 @@
 from feature.contains_original import contains_original
 from feature.opinion_words import opinion_words_count
 from feature.questionmark import contains_question_mark
+from feature.reversed_word_order import reversed_word_order
 from utils import read, write
 
 REPLIES = "..\\data\\tweets.json"
@@ -18,20 +19,22 @@ def main():
     positive = [line.rstrip('\n') for line in open(POSITIVE_LEXICON)]
     result = {}
     for tweet in data:
-        tweet_id = tweet['id']
-        text = tweet['text']
-        vector = list()
         if "reply_to" in tweet:
+            tweet_id = tweet['id']
+            text = tweet['text']
+            vector = list()
             in_reply_to = tweet['reply_to']
             vector.append(contains_original(text, in_reply_to))
-        vector.append(opinion_words_count(text, positive))
-        vector.append(opinion_words_count(text, negative))
-        # todo: implement reversed_word_order feature
-        vector.append(contains_question_mark(text))
-        result[tweet_id] = {
-            'rumour': tweet['rumour'],
-            'vector': vector
-        }
+            vector.append(opinion_words_count(text, positive))
+            vector.append(opinion_words_count(text, negative))
+            if "tags" in tweet:
+                tags = tweet['tags']
+                vector += reversed_word_order(tags)
+            vector.append(contains_question_mark(text))
+            result[tweet_id] = {
+                'rumour': tweet['rumour'],
+                'vector': vector
+            }
     write(OUTFILE, result)
 
 

@@ -2,8 +2,4 @@ REVERSED_ORDER_TAGS = ["NN PRP", "NNP PRP VBP", "WP VB", "WRB VB PRP", "WDT NNS"
 
 
 def reversed_word_order(tags):
-    result = False
-    for predefined in REVERSED_ORDER_TAGS:
-        result |= predefined in tags
-    return result
-
+    return [x in tags for x in REVERSED_ORDER_TAGS]
